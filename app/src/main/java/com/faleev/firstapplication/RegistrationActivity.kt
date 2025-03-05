@@ -1,11 +1,12 @@
 package com.faleev.firstapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class RegistrationActivity : AppCompatActivity() {
 
     private lateinit var radioGroup: RadioGroup
     private lateinit var inputField: EditText
@@ -58,7 +59,10 @@ class MainActivity : AppCompatActivity() {
             val repeatPassword = confirmPasswordField.text.toString().trim()
 
             if (!validateInput(input, password, repeatPassword)) return@setOnClickListener
-            // Действия при успешной регистрации
+
+            AuthHelper.saveUserData(this, input, password, autoLogin = false)
+            startActivity(Intent(this, ContentActivity::class.java))
+            finish()
         }
     }
 
