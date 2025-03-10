@@ -16,7 +16,7 @@ class RegistrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registration) // Замените на имя вашего XML-файла
+        setContentView(R.layout.activity_registration)
 
         initViews()
         setupRadioGroupListener()

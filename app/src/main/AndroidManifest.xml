@@ -7,33 +7,25 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-        <!-- Стартовый экран -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Экран регистрации -->
         <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
-
-        <!-- Экран входа -->
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-
-        <!-- Основной экран -->
         <activity
             android:name=".ContentActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>
