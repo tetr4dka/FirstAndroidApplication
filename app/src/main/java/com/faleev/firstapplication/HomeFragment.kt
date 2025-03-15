@@ -5,13 +5,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class HomeFragment : Fragment() {
+    private val myAdapter = PhoneAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val root = inflater.inflate(R.layout.fragment_home, container, false)
+
+        // Настройка RecyclerView
+        val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = myAdapter
+
+        loadData()
+        return root
+    }
+
+    private fun loadData() {
+        // Пример данных (можно заменить на свои)
+        val phoneData = arrayListOf(
+            PhoneModel("iPhone 15 Pro", 4.8),
+            PhoneModel("Samsung Galaxy S23", 4.7),
+            PhoneModel("Google Pixel 8", 4.6)
+        )
+        myAdapter.setupPhones(phoneData)
     }
 }
