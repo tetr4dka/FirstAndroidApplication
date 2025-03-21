@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "224504067580",
+    "project_id": "phonerating-9fbfd",
+    "storage_bucket": "phonerating-9fbfd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224504067580:android:03e6cf555cdbaf12846e79",
+        "android_client_info": {
+          "package_name": "com.faleev.firstapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-po2leq75GX7LbmvQZtTR_XVhXEvJ3ms"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -18,7 +18,6 @@ class HomeFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
-        // Настройка RecyclerView
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = myAdapter
@@ -28,12 +27,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadData() {
-        // Пример данных (можно заменить на свои)
-        val phoneData = arrayListOf(
-            PhoneModel("iPhone 15 Pro", 4.8),
-            PhoneModel("Samsung Galaxy S23", 4.7),
-            PhoneModel("Google Pixel 8", 4.6)
-        )
-        myAdapter.setupPhones(phoneData)
+        myAdapter.setupPhones(PhonesData.phoneList)
     }
 }
