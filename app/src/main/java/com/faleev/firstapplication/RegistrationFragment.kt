@@ -1,18 +1,20 @@
 package com.faleev.firstapplication
 
-import android.content.Context
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.faleev.firstapplication.databinding.FragmentRegistrationBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class RegistrationFragment : Fragment() {
     private lateinit var binding: FragmentRegistrationBinding
-    private lateinit var navController: NavController
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,13 +22,12 @@ class RegistrationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentRegistrationBinding.inflate(inflater, container, false)
+        auth = FirebaseAuth.getInstance()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = findNavController()
-
         setupRadioGroup()
         setupRegisterButton()
     }
@@ -41,13 +42,22 @@ class RegistrationFragment : Fragment() {
     }
 
     private fun switchToEmailMode() {
-        binding.inputField.hint = "Введите почту"
-        binding.inputField.inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        binding.inputField.apply {
+            hint = "Введите почту"
+            inputType = InputType.TYPE_CLASS_TEXT or
+                    InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            setText("") // Очищаем поле
+            imeOptions = EditorInfo.IME_ACTION_NEXT // Опция "Далее" на клавиатуре
+        }
     }
 
     private fun switchToPhoneMode() {
-        binding.inputField.hint = "Введите телефон"
-        binding.inputField.inputType = android.text.InputType.TYPE_CLASS_PHONE
+        binding.inputField.apply {
+            hint = "Введите телефон"
+            inputType = InputType.TYPE_CLASS_PHONE
+            setText("") // Очищаем поле
+            imeOptions = EditorInfo.IME_ACTION_NEXT
+        }
     }
 
     private fun setupRegisterButton() {
@@ -57,8 +67,26 @@ class RegistrationFragment : Fragment() {
             val repeatPassword = binding.confirmPasswordField.text.toString().trim()
 
             if (validateInput(input, password, repeatPassword)) {
-                AuthHelper.saveUserData(requireContext(), input, password, autoLogin = false)
-                navController.navigate(R.id.action_registration_to_home)
+                // Регистрация через Firebase
+                auth.createUserWithEmailAndPassword(input, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Сохраняем данные локально
+                            AuthHelper.saveUserData(
+                                requireContext(),
+                                input,
+                                password,
+                                autoLogin = false
+                            )
+                            findNavController().navigate(R.id.action_registration_to_home)
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Ошибка: ${task.exception?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
             }
         }
     }
@@ -92,6 +120,6 @@ class RegistrationFragment : Fragment() {
         binding.registrationTypeGroup.checkedRadioButtonId == R.id.phoneRegistration
 
     private fun showToast(message: String) {
-        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

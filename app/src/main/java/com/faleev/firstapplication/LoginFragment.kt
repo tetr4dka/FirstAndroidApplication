@@ -1,18 +1,18 @@
 package com.faleev.firstapplication
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.faleev.firstapplication.databinding.FragmentLoginBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var navController: NavController
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,41 +20,36 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
+        auth = FirebaseAuth.getInstance()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = findNavController()
 
-        setupLoginButton()
-    }
-
-    private fun setupLoginButton() {
         binding.loginButton.setOnClickListener {
             val email = binding.inputField.text.toString().trim()
             val password = binding.passwordField.text.toString().trim()
-            val autoLogin = binding.autoLoginCheckBox.isChecked
 
-            val (savedEmail, savedPassword, _) = AuthHelper.getUserData(requireContext())
-
-            if (email == savedEmail && password == savedPassword) {
-                AuthHelper.saveUserData(requireContext(), email, password, autoLogin)
-
-                if (autoLogin) {
-                    // Если галочка выбрана, переходим через SplashFragment
-                    navController.navigate(R.id.action_login_to_splash)
-                } else {
-                    // Если галочка НЕ выбрана, переходим сразу в HomeFragment
-                    navController.navigate(R.id.action_login_to_home)
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Сохраняем данные локально
+                        AuthHelper.saveUserData(
+                            requireContext(),
+                            email,
+                            password,
+                            binding.autoLoginCheckBox.isChecked
+                        )
+                        findNavController().navigate(R.id.action_login_to_home)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Ошибка: ${task.exception?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-            } else {
-                showToast("Неверные данные")
-            }
         }
-    }
-
-    private fun showToast(message: String) {
-        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
     }
 }

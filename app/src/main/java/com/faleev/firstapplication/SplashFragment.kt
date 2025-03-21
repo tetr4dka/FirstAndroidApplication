@@ -22,22 +22,17 @@ class SplashFragment : Fragment() {
     }
 
     private fun checkUserStatus() {
+        // Проверяем локальные данные, а не Firebase
         val (email, password, autoLogin) = AuthHelper.getUserData(requireContext())
         val navController = findNavController()
 
         when {
-            email == null || password == null -> {
-                // Пользователь не зарегистрирован
+            email == null || password == null ->
                 navController.navigate(R.id.action_splash_to_registration)
-            }
-            autoLogin -> {
-                // Пользователь выбрал "Автовход"
+            autoLogin ->
                 navController.navigate(R.id.action_splash_to_home)
-            }
-            else -> {
-                // Пользователь не выбрал "Автовход" — остаемся на текущем экране
-                // или переходим на логин (если требуется)
-            }
+            else ->
+                navController.navigate(R.id.action_splash_to_login)
         }
     }
 }
